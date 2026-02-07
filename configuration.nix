@@ -17,7 +17,26 @@
   boot.loader = {
     efi.canTouchEfiVariables = true;
     systemd-boot.enable = false; # Disable systemd-boot explicitly
-    limine.enable = true;
+
+    limine = {
+      enable = true;
+      enableEditor = true;
+      maxGenerations = 5;
+
+      style = {
+        wallpapers = [ ];
+        interface.resolution = "1920x1080"; # 3840x2160 is not supported in uefi;
+      };
+
+      extraEntries = ''
+        /Windows
+            protocol: efi
+            path: boot():/EFI/Microsoft/Boot/bootmgfw.efi
+      '';
+      extraConfig = ''
+        remember_last_entry: yes
+      '';
+    };
   };
 
   boot.kernelPackages = pkgs.linuxPackages_latest;
