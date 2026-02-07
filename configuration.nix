@@ -101,6 +101,17 @@
 
   services.udisks2.enable = true;
 
+  fonts.packages =
+    with pkgs;
+    [
+      noto-fonts
+      noto-fonts-color-emoji
+      noto-fonts-cjk-sans
+      noto-fonts-cjk-serif
+      liberation_ttf
+    ]
+    ++ builtins.filter lib.attrsets.isDerivation (builtins.attrValues pkgs.nerd-fonts);
+
   environment.systemPackages = with pkgs; [
     neovim
     fuzzel
