@@ -51,6 +51,18 @@
       TimeoutStopSec = 10;
     };
   };
+  systemd.user.services.ironbar = {
+    description = "ironbar";
+    wantedBy = [ "niri.service" ]; # This creates the niri.wants relationship
+    after = [ "niri.service" ]; # Start after niri starts
+    serviceConfig = {
+      Type = "simple";
+      ExecStart = "${pkgs.ironbar}/bin/ironbar";
+      Restart = "on-failure";
+      RestartSec = 1;
+      TimeoutStopSec = 10;
+    };
+  };
 
   users.users.matilde = {
     isNormalUser = true;
