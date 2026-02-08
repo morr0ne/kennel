@@ -8,6 +8,7 @@
 {
   imports = [
     ./hardware-configuration.nix
+    ./services.nix
   ];
 
   nixpkgs.config.allowUnfree = true;
@@ -50,45 +51,6 @@
     keyMap = "it";
   };
 
-  services.pipewire = {
-    enable = true;
-    pulse.enable = true;
-    jack.enable = true;
-    alsa.enable = true;
-    alsa.support32Bit = true;
-    wireplumber.enable = true;
-  };
-
-  services.displayManager.ly.enable = true;
-  services.gnome.gnome-keyring.enable = true;
-  security.pam.services.login.enableGnomeKeyring = true;
-  security.polkit.enable = true;
-
-  systemd.user.services.polkit-kde-authentication-agent-1 = {
-    description = "polkit-kde-authentication-agent-1";
-    wantedBy = [ "niri.service" ]; # This creates the niri.wants relationship
-    after = [ "niri.service" ]; # Start after niri starts
-    serviceConfig = {
-      Type = "simple";
-      ExecStart = "${pkgs.kdePackages.polkit-kde-agent-1}/libexec/polkit-kde-authentication-agent-1";
-      Restart = "on-failure";
-      RestartSec = 1;
-      TimeoutStopSec = 10;
-    };
-  };
-  systemd.user.services.ironbar = {
-    description = "ironbar";
-    wantedBy = [ "niri.service" ]; # This creates the niri.wants relationship
-    after = [ "niri.service" ]; # Start after niri starts
-    serviceConfig = {
-      Type = "simple";
-      ExecStart = "${pkgs.ironbar}/bin/ironbar";
-      Restart = "on-failure";
-      RestartSec = 1;
-      TimeoutStopSec = 10;
-    };
-  };
-
   users.users.matilde = {
     isNormalUser = true;
     extraGroups = [ "wheel" ];
@@ -123,8 +85,6 @@
     enable = true;
     pinentryPackage = pkgs.pinentry-qt;
   };
-
-  services.udisks2.enable = true;
 
   fonts.packages =
     with pkgs;
