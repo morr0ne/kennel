@@ -53,7 +53,11 @@
 
   users.users.matilde = {
     isNormalUser = true;
-    extraGroups = [ "wheel" ];
+    extraGroups = [
+      "wheel"
+      "docker"
+      "networkmanager"
+    ];
     shell = pkgs.zsh;
     packages = with pkgs; [
       tree
@@ -71,6 +75,10 @@
         "git"
       ];
     };
+
+    shellInit = ''
+      eval "$(fnm env --use-on-cd --shell zsh)"
+    '';
   };
 
   programs.zoxide.enableZshIntegration = true;
@@ -96,6 +104,10 @@
       liberation_ttf
     ]
     ++ builtins.filter lib.attrsets.isDerivation (builtins.attrValues pkgs.nerd-fonts);
+
+  virtualisation.docker = {
+    enable = true;
+  };
 
   environment.systemPackages = with pkgs; [
     neovim
@@ -123,6 +135,11 @@
     claude-code
     zellij
     mako
+    rustup
+    teams-for-linux
+    fnm
+    uv
+    wl-clipboard
     (vscode.override {
       commandLineArgs = [
         "--enable-features=UseOzonePlatform,WaylandWindowDecorations"
@@ -131,6 +148,9 @@
       ];
     })
   ];
+
+  programs.nix-ld.enable = true;
+  environment.localBinInPath = true;
 
   nix.settings.experimental-features = [
     "nix-command"
