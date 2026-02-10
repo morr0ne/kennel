@@ -135,12 +135,12 @@
     claude-code
     zellij
     mako
-    rustup
     teams-for-linux
     fnm
     uv
     wl-clipboard
     bun
+    pavucontrol
     (vscode.override {
       commandLineArgs = [
         "--enable-features=UseOzonePlatform,WaylandWindowDecorations"
@@ -157,6 +157,11 @@
     "nix-command"
     "flakes"
   ];
+
+  programs.direnv = {
+    enable = true;
+    nix-direnv.enable = true;
+  };
 
   # This option defines the first version of NixOS you have installed on this particular machine,
   # and is used to maintain compatibility with application data (e.g. databases) created on older NixOS versions.
