@@ -12,38 +12,41 @@
   ];
 
   nixpkgs.config.allowUnfree = true;
-
   hardware.amdgpu.initrd.enable = true;
 
-  boot.loader = {
-    efi.canTouchEfiVariables = true;
-    systemd-boot.enable = false; # Disable systemd-boot explicitly
+  boot = {
+    kernelPackages = pkgs.linuxPackages_latest;
 
-    limine = {
-      enable = true;
-      enableEditor = true;
-      maxGenerations = 5;
+    loader = {
+      efi.canTouchEfiVariables = true;
+      systemd-boot.enable = false; # Disable systemd-boot explicitly
 
-      style = {
-        wallpapers = [ ];
-        interface.resolution = "1920x1080"; # 3840x2160 is not supported in uefi;
+      limine = {
+        enable = true;
+        enableEditor = true;
+        maxGenerations = 5;
+
+        style = {
+          wallpapers = [ ];
+          interface.resolution = "1920x1080"; # 3840x2160 is not supported in uefi;
+        };
+
+        extraEntries = ''
+          /Windows
+              protocol: efi
+              path: boot():/EFI/Microsoft/Boot/bootmgfw.efi
+        '';
+        extraConfig = ''
+          remember_last_entry: yes
+        '';
       };
-
-      extraEntries = ''
-        /Windows
-            protocol: efi
-            path: boot():/EFI/Microsoft/Boot/bootmgfw.efi
-      '';
-      extraConfig = ''
-        remember_last_entry: yes
-      '';
     };
   };
 
-  boot.kernelPackages = pkgs.linuxPackages_latest;
-
-  networking.hostName = "mati-nixing";
-  networking.networkmanager.enable = true;
+  networking = {
+    hostName = "mati-nixing";
+    networkmanager.enable = true;
+  };
   time.timeZone = "Europe/Rome";
 
   i18n.defaultLocale = "en_US.UTF-8";
@@ -64,34 +67,57 @@
     ];
   };
 
-  programs.zsh = {
-    enable = true;
-    enableCompletion = true;
+  programs = {
+    firefox.enable = true;
+    niri.enable = true;
+    foot.enable = true;
+    vscode.enable = true;
+    nix-ld.enable = true;
 
-    ohMyZsh = {
+    gnupg.agent = {
       enable = true;
-      theme = "robbyrussell";
-      plugins = [
-        "git"
+      pinentryPackage = pkgs.pinentry-qt;
+    };
+
+    direnv = {
+      enable = true;
+      nix-direnv.enable = true;
+    };
+
+    gamescope = {
+      enable = true;
+      capSysNice = true;
+    };
+
+    steam = {
+      enable = true;
+
+      extraCompatPackages = with pkgs; [
+        proton-ge-bin
       ];
     };
 
-    shellInit = ''
-      eval "$(fnm env --use-on-cd --shell zsh)"
-    '';
-  };
+    zsh = {
+      enable = true;
+      enableCompletion = true;
 
-  programs.zoxide.enableZshIntegration = true;
+      ohMyZsh = {
+        enable = true;
+        theme = "robbyrussell";
+        plugins = [
+          "git"
+        ];
+      };
 
-  programs.firefox.enable = true;
-  programs.niri.enable = true;
-  programs.foot.enable = true;
-  programs.vscode.enable = true;
-  programs.zoxide.enable = true;
+      shellInit = ''
+        eval "$(fnm env --use-on-cd --shell zsh)"
+      '';
+    };
 
-  programs.gnupg.agent = {
-    enable = true;
-    pinentryPackage = pkgs.pinentry-qt;
+    zoxide = {
+      enable = true;
+      enableZshIntegration = true;
+    };
   };
 
   fonts.packages =
@@ -109,60 +135,55 @@
     enable = true;
   };
 
-  environment.systemPackages = with pkgs; [
-    neovim
-    fuzzel
-    niri
-    foot
-    discord
-    xwayland-satellite
-    signal-desktop
-    hyfetch
-    fastfetch
-    xdg-desktop-portal-gtk
-    xdg-desktop-portal-gnome
-    gnome-keyring
-    efibootmgr
-    seahorse
-    kdePackages.polkit-kde-agent-1
-    nixfmt
-    git
-    gnupg
-    zoxide
-    nautilus
-    udiskie
-    ironbar
-    claude-code
-    zellij
-    mako
-    teams-for-linux
-    fnm
-    uv
-    wl-clipboard
-    bun
-    nil
-    pavucontrol
-    (vscode.override {
-      commandLineArgs = [
-        "--enable-features=UseOzonePlatform,WaylandWindowDecorations"
-        "--ozone-platform=wayland"
-        "--password-store=gnome-libsecret"
-      ];
-    })
-  ];
+  environment = {
+    localBinInPath = true;
 
-  programs.nix-ld.enable = true;
-  environment.localBinInPath = true;
+    systemPackages = with pkgs; [
+      neovim
+      fuzzel
+      discord
+      xwayland-satellite
+      signal-desktop
+      hyfetch
+      fastfetch
+      xdg-desktop-portal-gtk
+      xdg-desktop-portal-gnome
+      gnome-keyring
+      efibootmgr
+      seahorse
+      kdePackages.polkit-kde-agent-1
+      nixfmt
+      git
+      nautilus
+      udiskie
+      ironbar
+      claude-code
+      zellij
+      mako
+      teams-for-linux
+      fnm
+      uv
+      wl-clipboard
+      bun
+      nil
+      pavucontrol
+      bubblewrap
+      slack
+      equicord
+      (vscode.override {
+        commandLineArgs = [
+          "--enable-features=UseOzonePlatform,WaylandWindowDecorations"
+          "--ozone-platform=wayland"
+          "--password-store=gnome-libsecret"
+        ];
+      })
+    ];
+  };
 
   nix.settings.experimental-features = [
     "nix-command"
     "flakes"
   ];
-
-  programs.direnv = {
-    enable = true;
-    nix-direnv.enable = true;
-  };
 
   # This option defines the first version of NixOS you have installed on this particular machine,
   # and is used to maintain compatibility with application data (e.g. databases) created on older NixOS versions.
