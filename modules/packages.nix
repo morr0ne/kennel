@@ -2,6 +2,30 @@
 
 {
   environment.systemPackages = with pkgs; [
+    (pkgs.makeDesktopItem {
+      name = "legcord-scorchy";
+      desktopName = "Scorchy";
+      comment = "Lightweight, alternative desktop client for Discord";
+      exec = "legcord --user-data-dir=/home/matilde/.config/legcord-scorchy %U";
+      icon = "legcord";
+      terminal = false;
+      categories = [
+        "Network"
+        "InstantMessaging"
+        "Chat"
+      ];
+      keywords = [
+        "discord"
+        "vencord"
+        "electron"
+        "chat"
+      ];
+      genericName = "Internet Messenger";
+      startupWMClass = "legcord-scorchy";
+      extraConfig = {
+        Version = "1.5";
+      };
+    })
     neovim
     fuzzel
     xwayland-satellite
@@ -36,32 +60,32 @@
     theclicker
     prismlauncher
     jdk21_headless
-    llm-agents.claude-code
-    llm-agents.opencode
-    llm-agents.codex
+    claude-code
+    opencode
+    codex
+    pi
     pnpm
     zen-browser
     deno
     b3sum
     telegram-desktop
-    poetry
+    # poetry
     dbeaver-bin
     postgresql
-    yt-dlp_git
+    yt-dlp
     android-tools
     unzip
     qdirstat
     usbutils
-    jellyfin-desktop
     ffmpeg-full
     tutanota-desktop
     p7zip
     screen
-    cargo-shear
     pandoc
     inkscape
     helix
     awww
+    eigenwallet
     veracrypt
     libreoffice-fresh
     hunspell
@@ -72,15 +96,19 @@
     vlc
     easyeffects
     pulseaudio
-    iwgtk
     bruno
     xh
     jq
     tor-browser
     snapshot
     geeqie
-    firefox-devedition
+    gallery-dl
     weston-demos
+    todoist-electron
+    python3
+    tree
+    ntfs3g
+    ntfsprogs
     (pkgs.symlinkJoin {
       name = "sweethome3d";
       paths = [ pkgs.sweethome3d.application ];
