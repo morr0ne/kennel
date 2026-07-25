@@ -13,8 +13,6 @@
     useNetworkd = true;
   };
 
-  hardware.amdgpu.initrd.enable = true;
-
   local.niri = {
     warpMouseToFocus = true;
     outputs = [
@@ -35,9 +33,8 @@
 
   boot = {
     kernelPackages = pkgs.linuxPackages_cachyos-lto-znver4;
-    kernelParams = [
-      "amdgpu.ppfeaturemask=0xffffffff"
-    ];
+
+    blacklistedKernelModules = [ "ntfs3" ];
 
     loader = {
       efi.canTouchEfiVariables = true;
@@ -48,6 +45,10 @@
         enableEditor = true;
         maxGenerations = 5;
 
+        additionalFiles = {
+          "memtest86/memtest.efi" = pkgs.memtest86plus.efi;
+        };
+
         style = {
           wallpapers = [ ];
           interface.resolution = "1920x1080";
@@ -57,6 +58,10 @@
           /Windows
               protocol: efi
               path: boot():/EFI/Microsoft/Boot/bootmgfw.efi
+
+          /Memtest86+
+              protocol: efi
+              path: boot():/limine/memtest86/memtest.efi
         '';
         extraConfig = ''
           remember_last_entry: yes
@@ -65,7 +70,7 @@
     };
   };
 
-  services.lact.enable = true;
+  services.lact.enable = false;
   services.ollama = {
     enable = true;
     package = pkgs.ollama-rocm;
