@@ -76,11 +76,22 @@
       overlays = with inputs; {
         nixpkgs.overlays = [
           helix.overlays.default
-          llm-agents.overlays.default
           weston-demos.overlays.default
+
+          (final: prev: llm-agents.packages.${prev.stdenv.hostPlatform.system} or { })
+
           (final: prev: {
-            zen-browser = zen-browser.packages.${prev.system}.default;
-            ironbar = ironbar.packages.${prev.system}.default;
+            zen-browser = zen-browser.packages.${prev.stdenv.hostPlatform.system}.default;
+            ironbar = ironbar.packages.${prev.stdenv.hostPlatform.system}.default;
+
+            linux-firmware = prev.linux-firmware.overrideAttrs (old: {
+              version = "unstable-2026-07-06";
+              src = prev.fetchgit {
+                url = "https://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git";
+                rev = "2c35b1ed46f661baaf14b08cebb9201ca802f939";
+                hash = "sha256-omvuU48DpQ+KCxTU4JWj9ivzgFwrykuCBMCGGpa6kKM=";
+              };
+            });
           })
         ];
       };
@@ -93,6 +104,8 @@
       ];
     in
     {
+      devShells = import ./modules/devshell.nix { inherit nixpkgs; };
+
       nixosConfigurations.ahnashawn = nixpkgs.lib.nixosSystem {
         specialArgs = { inherit inputs; };
         modules = [
