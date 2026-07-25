@@ -24,9 +24,6 @@
       "gamemode"
     ];
     shell = pkgs.zsh;
-    packages = with pkgs; [
-      tree
-    ];
   };
 
   hjem.users = {
