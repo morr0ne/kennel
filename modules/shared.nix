@@ -143,7 +143,7 @@
           "userMessagesPronouns"
           "questify"
           "betterGifPicker"
-          { lastFmRichPresence.apiKey = ""; }
+          { musicRichPresence.apiKey = ""; }
         ];
       };
   };
