@@ -2,6 +2,9 @@
 
 My very bad nix config :3
 
+# Dog :3
+woof woof wruff awruff bark bark wrufff awruff bwruff bwruf arf arf wruff awruff woof awrf awrf arf wruff awruff awrff wrff brwruff
+
 ## License
 
 This project is licensed under the [European Union Public License v1.2](https://eupl.eu/)
